@@ -1,15 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { db } from './data/db';
 import Header from './components/Header';
 import Guitar from './components/Guitar';
 
 function App() {
+
+  //Check items on localStorage
+  const initialCart = () => {
+    const localStorageCart = localStorage.getItem('cart')
+    return localStorageCart ? JSON.parse(localStorageCart) : []
+  }
+
+
   //State
     const [data, setData] = useState(db)
-    const [cart, setCart] = useState([])
+    const [cart, setCart] = useState(initialCart)
 
     const MAX_ITEM = 5
+
+    useEffect(()=>{
+      localStorage.setItem('cart', JSON.stringify(cart))
+    }, [cart])
 
     function addToCart(item){
 
@@ -70,6 +82,12 @@ function App() {
     }
 
 
+    function clearCart(){
+      setCart([])
+    }
+
+
+
   return (
     <>
       <Header
@@ -77,6 +95,7 @@ function App() {
         removeFromCart ={removeFromCart}
         increaseQuantity = {increaseQuantity}
         decreaseQuantity = {decreaseQuantity}
+        clearCart={clearCart}
       />
 
       <main className='container-xl mt-5'>
